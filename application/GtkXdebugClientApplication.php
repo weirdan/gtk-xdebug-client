@@ -36,6 +36,9 @@ class GtkXdebugClientApplication {
 			define('GTKXDEBUGCLIENT_BASEPATH', realpath(dirname(__FILE__) . '/..'));
 		}
 		list($type, $name) = explode('_', $className, 2);
+		if (empty($name)) {
+			$name = $className;
+		}
 		$file = '';
 		switch (strtolower($type)) {
 			case 'view':
@@ -78,11 +81,18 @@ class GtkXdebugClientApplication {
 		$this->protocol->events->breakpointRemoved[] = array($this->views->breakpoints, 'removeBreakpoint');
 
 		$this->views->stack = new View_Stack($this->ui->get_widget('stack_tree'), $this->protocol, $this);
+		$this->protocol->events->stackReceived[] = array($this->views->stack, 'setStack');
 
 		$this->views->editor = new View_Editor($this->ui->get_widget('scintilla_placeholder'), $this->protocol, $this);
 		$this->protocol->events->sourceReceived[] = array($this->views->editor, 'setSource');
 		$this->protocol->events->breakpointSet[] = array($this->views->editor, 'addBreakpoint');
 		$this->protocol->events->breakpointRemoved[] = array($this->views->editor, 'removeBreakpoint');
+		$this->protocol->events->stackReceived[] = array($this->views->editor, 'setCurrentByStack');
+
+
+		$this->views->toolbar = new View_Toolbar($this->ui->get_widget('controls_toolbar'), $this->protocol, $this);
+		$this->protocol->events->sourceReceived[] = array($this->views->toolbar, 'sourceReceived');
+		$this->protocol->events->runStopped[] = array($this->views->toolbar, 'runStopped');
 
 		// trace window
 		$this->views->trace = new View_Trace($this->ui->get_widget('trace_window'), $this->protocol, $this);

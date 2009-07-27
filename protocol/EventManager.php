@@ -23,7 +23,7 @@ class XdebugProtocol_EventManager {
 		return $this->events[$name];	
 	}
 
-	public function dispatch($name, $args) {
+	public function dispatch($name, $args = array()) {
 		if (isset($this->events[$name]) && is_array($this->events[$name]) && !empty($this->events[$name])) {
 			foreach ($this->events[$name] as $handler) {
 				call_user_func_array($handler, $args);

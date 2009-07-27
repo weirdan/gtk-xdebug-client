@@ -1,25 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--
-/**
- * gtk-xdebug-client - Provides GUI for a debugger engine speaking DBGp
- * Copyright (C) 2009  Bruce Weirdan
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * ut WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
--->
-<!--Generated with glade3 3.4.3 on Sun Jul 19 06:51:38 2009 -->
+<!--Generated with glade3 3.4.3 on Mon Jul 27 02:52:16 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="rootWnd">
     <property name="width_request">800</property>
@@ -113,49 +94,64 @@
                       </widget>
                     </child>
                     <child>
-                      <widget class="GtkToolbar" id="toolbar1">
+                      <widget class="GtkToolbar" id="controls_toolbar">
                         <property name="visible">True</property>
                         <property name="toolbar_style">GTK_TOOLBAR_BOTH_HORIZ</property>
                         <child>
-                          <widget class="GtkToolButton" id="toolbutton1">
+                          <widget class="GtkToolButton" id="run_button">
                             <property name="visible">True</property>
-                            <property name="stock_id">gtk-media-play</property>
+                            <property name="sensitive">False</property>
+                            <property name="tooltip" translatable="yes">Run</property>
+                            <property name="label" translatable="yes">Run</property>
+                            <property name="icon">continue.png</property>
                           </widget>
                           <packing>
                             <property name="expand">False</property>
                           </packing>
                         </child>
                         <child>
-                          <widget class="GtkToolButton" id="toolbutton2">
+                          <widget class="GtkToolButton" id="step_into_button">
                             <property name="visible">True</property>
-                            <property name="stock_id">gtk-goto-bottom</property>
+                            <property name="sensitive">False</property>
+                            <property name="tooltip" translatable="yes">Step into</property>
+                            <property name="label" translatable="yes">Step into</property>
+                            <property name="icon">stepInto.png</property>
                           </widget>
                           <packing>
                             <property name="expand">False</property>
                           </packing>
                         </child>
                         <child>
-                          <widget class="GtkToolButton" id="toolbutton3">
+                          <widget class="GtkToolButton" id="step_over_button">
                             <property name="visible">True</property>
-                            <property name="stock_id">gtk-jump-to</property>
+                            <property name="sensitive">False</property>
+                            <property name="tooltip" translatable="yes">Step over</property>
+                            <property name="label" translatable="yes">Step over</property>
+                            <property name="icon">stepOver.png</property>
                           </widget>
                           <packing>
                             <property name="expand">False</property>
                           </packing>
                         </child>
                         <child>
-                          <widget class="GtkToolButton" id="toolbutton4">
+                          <widget class="GtkToolButton" id="step_out_button">
                             <property name="visible">True</property>
-                            <property name="stock_id">gtk-goto-top</property>
+                            <property name="sensitive">False</property>
+                            <property name="tooltip" translatable="yes">Step out</property>
+                            <property name="label" translatable="yes">Step out</property>
+                            <property name="icon">stepOut.png</property>
                           </widget>
                           <packing>
                             <property name="expand">False</property>
                           </packing>
                         </child>
                         <child>
-                          <widget class="GtkToolButton" id="toolbutton5">
+                          <widget class="GtkToolButton" id="stop_debugging_button">
                             <property name="visible">True</property>
-                            <property name="stock_id">gtk-dialog-error</property>
+                            <property name="sensitive">False</property>
+                            <property name="tooltip" translatable="yes">Stop debugging</property>
+                            <property name="label" translatable="yes">Stop debugging</property>
+                            <property name="icon">errorIcon.png</property>
                           </widget>
                           <packing>
                             <property name="expand">False</property>

@@ -45,9 +45,7 @@ class View_Editor extends View_Widget {
 		$this->editor->connect('margin_click', array($this, 'marginClicked'));
 
 
-		$this->editor->marker_define(self::MARKER_BREAKPOINT, 0);
-		$this->editor->marker_set_fore(self::MARKER_BREAKPOINT, $this->color(255, 0, 0));
-		$this->editor->marker_set_back(self::MARKER_BREAKPOINT, $this->color(255, 0, 0));
+		$this->editor->marker_define_pixmap(self::MARKER_BREAKPOINT, file_get_contents(GTKXDEBUGCLIENT_BASEPATH . '/view/breakpoint.xpm'));
 	}
 
 	public function setCurrentLine($num) {
@@ -72,6 +70,7 @@ class View_Editor extends View_Widget {
 
 	public function setSource($filename, $contents) {
 		$this->filename = $filename;
+		$this->editor->clear_all();
 		$this->editor->insert_text(-1, $contents);
 		$this->setCurrentLine(0);
 	}
@@ -82,5 +81,13 @@ class View_Editor extends View_Widget {
 
 	public function removeBreakpoint($file, $line) {
 		$this->editor->marker_delete($line, self::MARKER_BREAKPOINT);
+	}
+
+	public function setCurrentByStack($stack) {
+		list($frame,) = $stack;
+		if ($frame) {
+			$this->filename = $frame['filename'];
+			$this->setCurrentLine($frame['lineno']);
+		}
 	}
 }

@@ -17,5 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 class View_Stack extends View_Widget {
-
+	public function __construct($widget, $protocol, $application) {
+		parent::__construct($widget, $protocol, $application);
+		$this->list = new GtkListStore(GObject::TYPE_STRING);
+		$this->tree = $this->application->ui->get_widget('stack_tree');
+		$this->tree->append_column(new GtkTreeViewColumn('Function', new GtkCellRendererText, 'text', 0));
+		$this->tree->set_model($this->list);
+	}
+	public function setStack($stack) {
+		$this->list->clear();
+		foreach ($stack as $frame) {
+			$this->list->append(array($frame['where']));
+		}
+	}
 }

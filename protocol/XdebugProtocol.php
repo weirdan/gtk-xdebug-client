@@ -27,6 +27,30 @@ class XdebugProtocol {
 		$this->application = $application;
 	}
 
+	public function run() {
+		$this->events->dispatch('runStarted');
+		$this->send(array($this, 'runStopped'), 'run');
+	}
+
+	public function runStopped($message, $command, $params, $data) {
+		$this->events->dispatch('runStopped');
+		$this->send(array($this, 'stackReceived'), 'stack_get');
+	}
+
+	public function stackReceived($message, $command, $params, $data) {
+		$stack = array();
+		foreach ($message->stack as $frame) {
+			$stack[] = array('level' => (string) $frame['level'],
+							 'type' => (string) $frame['type'],
+							 'filename' => (string) $frame['filename'],
+							 'lineno' => ((int) $frame['lineno']) - 1,
+							 'where' => (string) $frame['where'],
+							 'cmdbegin' => (string) $frame['cmdbegin'],
+							 'cmdend' => (string) $frame['cmdend']);
+		}
+		$this->events->dispatch('stackReceived', array($stack));
+	}
+
 	public function __get($name) {
 		switch ($name) {
 			case 'events':
@@ -120,6 +144,7 @@ class XdebugProtocol {
 
 	protected function sourceReceived(SimpleXMLElement $message, $command, $params, $data) {
 		$this->events->dispatch('sourceReceived', array($params['f'], base64_decode((string) $message)));
+		$this->runStopped($message, $command, $params, $data);
 	}
 
 	public function send($callback, $command, $params = array(), $data = "") {

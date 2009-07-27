@@ -36,14 +36,16 @@ class XdebugProtocol_BreakpointManager implements ArrayAccess {
 	public function offsetSet($offset, $value) {
 		list($file, $line) = $this->offsetToPosition($offset);
 		if (!isset($this->_breakpoints[$file][$line])) {
-			$this->protocol->send(array($this, 'breakpointSet'), 'breakpoint_set', array('t' => 'line', 'f' => $file, 'n' => $line));
+			// dbgp uses 1-based line numbers
+			$this->protocol->send(array($this, 'breakpointSet'), 'breakpoint_set', array('t' => 'line', 'f' => $file, 'n' => $line + 1));
 		}
 	}
 
 	public function offsetUnset($offset) {
 		list($file, $line) = $this->offsetToPosition($offset);
 		if (isset($this->_breakpoints[$file][$line])) {
-			$this->protocol->send(array($this, 'breakpointRemoved'), 'breakpoint_remove', array('f' => $file, 'n' => $line, 'd' => $this->_breakpoints[$file][$line]));
+			// dbgp uses 1-based line numbers
+			$this->protocol->send(array($this, 'breakpointRemoved'), 'breakpoint_remove', array('f' => $file, 'n' => $line + 1, 'd' => $this->_breakpoints[$file][$line]));
 		}
 	}
 
@@ -55,15 +57,15 @@ class XdebugProtocol_BreakpointManager implements ArrayAccess {
 	}
 
 	public function breakpointSet($message, $command, $params, $data) {
-		$this->_breakpoints[$params['f']][$params['n']] = (string) $message['id'];
-		$this->protocol->events->dispatch('breakpointSet', array($params['f'], $params['n'], (string)$message['id']));
+		$this->_breakpoints[$params['f']][$params['n'] - 1] = (string) $message['id'];
+		$this->protocol->events->dispatch('breakpointSet', array($params['f'], $params['n'] - 1, (string)$message['id']));
 	}
 
 	public function breakpointRemoved($message, $command, $params, $data) {
 		$file = $params['f'];
 		$line = $params['n'];
-		$breakpointId = $this->_breakpoints[$file][$line];
-		unset($this->_breakpoints[$file][$line]);
-		$this->protocol->events->dispatch('breakpointRemoved', array($file, $line, $breakpointId));
+		$breakpointId = $this->_breakpoints[$file][$line - 1];
+		unset($this->_breakpoints[$file][$line - 1]);
+		$this->protocol->events->dispatch('breakpointRemoved', array($file, $line - 1, $breakpointId));
 	}
 }
