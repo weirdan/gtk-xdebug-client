@@ -46,6 +46,142 @@ class View_Editor extends View_Widget {
 
 
 		$this->editor->marker_define_pixmap(self::MARKER_BREAKPOINT, file_get_contents(GTKXDEBUGCLIENT_BASEPATH . '/view/breakpoint.xpm'));
+		$this->editor->set_lexer(GtkScintilla::SCINTILLA_LEX_PHPSCRIPT);
+		$this->editor->set_style_bits($this->editor->get_style_bits_needed());
+
+		$defaultBack = $this->phpStyles[GtkScintilla::SCINTILLA_HTML_PHP_DEFAULT]['back'];
+		foreach ($this->phpStyles as $style => $desc) {
+			$this->setStyle($style, call_user_func_array(array($this, 'color'), $desc['fore']), call_user_func_array(array($this, 'color'), isset($desc['back']) ? $desc['back'] : $defaultBack));
+		}
+		$this->editor->set_keywords(4, join(' ', $this->phpKeywords));
+	}
+
+	public $phpStyles = array(
+		GtkScintilla::SCINTILLA_HTML_PHP_DEFAULT => array(
+			'fore' => array(0, 0, 0),
+			'back' => array(255, 255, 255),
+		),
+		GtkScintilla::SCINTILLA_HTML_PHP_HSTRING => array(
+			'fore' => array(0, 255, 0),
+		),
+		GtkScintilla::SCINTILLA_HTML_PHP_SIMPLESTRING => array(
+			'fore' => array(0, 0, 255),
+		),
+		GtkScintilla::SCINTILLA_HTML_PHP_WORD => array(
+			'fore' => array(255, 0, 0),
+		),
+		GtkScintilla::SCINTILLA_HTML_PHP_NUMBER => array(
+			'fore' => array(255, 255, 0),
+		),
+		GtkScintilla::SCINTILLA_HTML_PHP_VARIABLE => array(
+			'fore' => array(0, 255, 255),
+		),
+		GtkScintilla::SCINTILLA_HTML_PHP_COMMENT => array(
+			'fore' => array(255, 0, 255),
+		),
+		GtkScintilla::SCINTILLA_HTML_PHP_COMMENTLINE => array(
+			'fore' => array(255, 0, 255),
+		),
+		GtkScintilla::SCINTILLA_HTML_PHP_HSTRING_VARIABLE => array(
+			'fore' => array(0, 255, 255),
+		),
+		GtkScintilla::SCINTILLA_HTML_PHP_OPERATOR => array(
+			'fore' => array(127, 127, 127),
+		),
+	);
+
+	// http://www.php.net/manual/en/reserved.keywords.php
+	public $phpKeywords = array(
+		// PHP Keywords
+		'abstract', // (as of PHP 5)	
+		'and',
+		'array',	
+		'as',	
+		'break',	
+		'case',	
+		'catch', // (as of PHP 5)	 
+		'cfunction', // (PHP 4 only), same as function (as per http://www.phpbuilder.com/lists/php3-list/199807/2411.php)
+		'class',
+		'clone', // (as of PHP 5)
+		'const',
+		'continue',
+		'declare', 
+		'default', 
+		'do',
+		'else',
+		'elseif',
+		'enddeclare',
+		'endfor',
+		'endforeach',
+		'endif',
+		'endswitch',
+		'endwhile', 
+		'extends', 
+		'final', // (as of PHP 5)
+		'for', 
+		'foreach', 
+		'function',
+		'global',
+		'goto', // (as of PHP 5.3)
+		'if', 
+		'implements', // (as of PHP 5)	
+		'interface', // (as of PHP 5)
+		'instanceof', // (as of PHP 5)
+		'namespace', // (as of PHP 5.3)	
+		'new', 
+		'old_function', // PHP2/FI leftover (PHP 4 only)
+		'or', 
+		'private', // (as of PHP 5)
+		'protected', // (as of PHP 5)
+		'public', // (as of PHP 5)
+		'static', 
+		'switch',
+		'throw', // (as of PHP 5)
+		'try', // (as of PHP 5)	
+		'use', //	
+		'var', 
+		'while',
+		'xor',
+		
+		// Compile-time constants
+		'__class__',
+		'__dir__', // (as of PHP 5.3)
+		'__file__',	
+		'__function__',
+		'__method__',
+		'__namespace__', // (as of PHP 5.3)				
+
+		// Language constructs
+		'die', 
+		'echo',
+		'empty',
+		'exit',
+		'eval',
+		'include',
+		'include_once',
+		'isset',
+		'list',
+		'require',
+		'require_once', 
+		'return', 
+		'print',
+		'unset',
+
+		// some internal functions
+		'define',
+	);
+
+	public function setStyle($style, $fore, $back, $size = false, $face = false) {
+		$this->editor->style_set_fore($style, $fore);	
+		$this->editor->style_set_back($style, $back);
+
+		if ($size) {
+			$this->editor->style_set_size($style, $size);
+		}
+
+		if ($face) {
+			$this->editor->style_set_font($style, $face);
+		}
 	}
 
 	public function setCurrentLine($num) {
@@ -73,6 +209,7 @@ class View_Editor extends View_Widget {
 		$this->editor->clear_all();
 		$this->editor->insert_text(-1, $contents);
 		$this->setCurrentLine(0);
+		$this->editor->colourise(0, -1);
 	}
 
 	public function addBreakpoint($file, $line, $id) {
